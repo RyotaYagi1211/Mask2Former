@@ -46,7 +46,7 @@ def build_transform_gen(cfg, is_train):
     min_scale = cfg.INPUT.MIN_SCALE
     max_scale = cfg.INPUT.MAX_SCALE
 
-    augmentation = []
+    augmentation = []##augmentation
 
     if cfg.INPUT.RANDOM_FLIP != "none":
         augmentation.append(

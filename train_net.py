@@ -45,7 +45,7 @@ from detectron2.evaluation import (
 from detectron2.projects.deeplab import add_deeplab_config, build_lr_scheduler
 from detectron2.solver.build import maybe_add_gradient_clipping
 from detectron2.utils.logger import setup_logger
-
+from detectron2.data.datasets import register_coco_instances
 # MaskFormer
 from mask2former import (
     COCOInstanceNewBaselineDatasetMapper,
@@ -278,6 +278,19 @@ class Trainer(DefaultTrainer):
         return res
 
 
+
+register_coco_instances(
+    "instance_train",
+    {},
+    "datasets/my_dataset/annotations/instances_default_poly.json",
+    "datasets/my_dataset/images"
+)
+# register_coco_instances(
+#     "instance_val",
+#     {},
+#     "datasets/my_dataset/annotations/instances_default.json",
+#     "datasets/my_dataset/val"
+# )
 def setup(args):
     """
     Create configs and perform basic setups.

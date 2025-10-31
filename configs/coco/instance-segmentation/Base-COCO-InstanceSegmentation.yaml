@@ -2,7 +2,9 @@ MODEL:
   BACKBONE:
     FREEZE_AT: 0
     NAME: "build_resnet_backbone"
-  WEIGHTS: "detectron2://ImageNetPretrained/torchvision/R-50.pkl"
+  # WEIGHTS: "detectron2://ImageNetPretrained/torchvision/R-50.pkl"
+  WEIGHTS: "output/coco_train/model_0269999.pth"
+
   PIXEL_MEAN: [123.675, 116.280, 103.530]
   PIXEL_STD: [58.395, 57.120, 57.375]
   RESNETS:
@@ -14,8 +16,8 @@ MODEL:
     # NORM: "SyncBN"
     RES5_MULTI_GRID: [1, 1, 1]  # not used
 DATASETS:
-  TRAIN: ("coco_2017_train",)
-  TEST: ("coco_2017_val",)
+  TRAIN: ("instance_train",)
+  TEST: ()
 SOLVER:
   IMS_PER_BATCH: 16
   BASE_LR: 0.0001
@@ -38,7 +40,9 @@ INPUT:
   MIN_SCALE: 0.1
   MAX_SCALE: 2.0
   FORMAT: "RGB"
+  #Augmentationの設定
   DATASET_MAPPER_NAME: "coco_instance_lsj"
+  
 TEST:
   EVAL_PERIOD: 5000
 DATALOADER:

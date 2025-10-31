@@ -25,8 +25,13 @@ from detectron2.utils.logger import setup_logger
 
 from mask2former import add_maskformer2_config
 from predictor import VisualizationDemo
-
-
+#############
+import torch
+print("CUDA available:", torch.cuda.is_available())
+if torch.cuda.is_available():
+    print("Using device:", torch.cuda.get_device_name(0))
+    print("Current device:", torch.cuda.current_device())
+#############
 # constants
 WINDOW_NAME = "mask2former demo"
 
@@ -116,6 +121,42 @@ if __name__ == "__main__":
             img = read_image(path, format="BGR")
             start_time = time.time()
             predictions, visualized_output = demo.run_on_image(img)
+            ##################
+            if "instances" in predictions:
+                instances = predictions["instances"].to("cpu")
+                masks = instances.pred_masks.numpy() if instances.has("pred_masks") else None
+                # VisualizerOutput → numpy画像（RGB）に変換
+                vis_img = visualized_output.get_image()  # np.ndarray, shape=(H,W,3), dtype=uint8
+
+                if masks is not None:
+                    for mid, mask in enumerate(masks):
+                        # 面積ベースでフィルタリング（ピクセル閾値と画像比率閾値の両方をチェック）
+                        min_area_pixels = 50
+                        min_area_ratio = 0.001  # 画像全体の0.1%
+                        area_pixels = int(mask.sum())
+                        h, w = mask.shape
+                        area_ratio = area_pixels / (h * w)
+                        if area_pixels < min_area_pixels or area_ratio < min_area_ratio:
+                            # 小さすぎるマスクは可視化から消す（元画像で上書きしてマスク表示を消去）
+                            mask_bool = mask.astype(bool)
+                            orig_rgb = img[:, :, ::-1]  # read_imageはBGRなのでRGBに変換
+                            vis_img[mask_bool] = orig_rgb[mask_bool]
+                            continue
+                        ys, xs = np.where(mask)
+                        
+                        if xs.size > 0 and ys.size > 0:
+                            cx, cy = int(xs.mean()), int(ys.mean())
+                            # OpenCVはBGRなので色指定注意
+                            cv2.putText(vis_img, f" {mid}", (cx-10, cy),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+                            # mask: 0/1 の2D配列
+                            contours, _ = cv2.findContours(mask.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                            cv2.drawContours(vis_img, contours, -1, (255, 255, 255), 1)                        
+                # vis_img を OpenCV用BGRに戻す
+                vis_img_bgr = vis_img[:, :, ::-1]
+                cv2.imwrite("outputdata/output1.png", vis_img_bgr)
+                print(f"Saved: outputdata/output1.png")
+    ####################
             logger.info(
                 "{}: {} in {:.2f}s".format(
                     path,
@@ -139,6 +180,7 @@ if __name__ == "__main__":
                 cv2.imshow(WINDOW_NAME, visualized_output.get_image()[:, :, ::-1])
                 if cv2.waitKey(0) == 27:
                     break  # esc to quit
+
     elif args.webcam:
         assert args.input is None, "Cannot have both --input and --webcam!"
         assert args.output is None, "output not yet supported with --webcam!"
@@ -192,3 +234,6 @@ if __name__ == "__main__":
             output_file.release()
         else:
             cv2.destroyAllWindows()
+
+
+

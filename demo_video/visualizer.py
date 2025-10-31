@@ -3,6 +3,7 @@
 import torch
 import numpy as np
 import matplotlib.colors as mplc
+import cv2
 
 from detectron2.utils.visualizer import ColorMode, GenericMask, Visualizer, _create_text_labels
 
@@ -33,6 +34,75 @@ class TrackVisualizer(Visualizer):
         vec = vec / np.linalg.norm(vec) * 0.5
         res = np.clip(vec + color, 0, 1)
         return tuple(res)
+
+    def _get_mask_center(self, mask):
+        """
+        Calculate the center of a mask.
+        Args:
+            mask (ndarray): binary mask array
+        Returns:
+            tuple: (center_x, center_y) coordinates of the mask center
+        """
+        # Get mask as numpy array
+        if isinstance(mask, GenericMask):
+            mask_array = mask.mask
+        else:
+            mask_array = mask
+        
+        # Find all non-zero points
+        y_indices, x_indices = np.where(mask_array > 0)
+        
+        if len(x_indices) == 0 or len(y_indices) == 0:
+            return None
+        
+        # Calculate center
+        center_x = int(np.mean(x_indices))
+        center_y = int(np.mean(y_indices))
+        
+        return (center_x, center_y)
+
+    def _draw_text_at_center(self, mask, text, color):
+        """
+        Draw text at the center of a mask.
+        Args:
+            mask: mask object
+            text (str): text to draw
+            color (tuple): RGB color for the text
+        """
+        center = self._get_mask_center(mask)
+        if center is None:
+            return
+        
+        center_x, center_y = center
+        
+        # Convert RGB color (0-1 range) to BGR (0-255 range) for OpenCV
+        bgr_color = tuple([int(c * 255) for c in reversed(color)])
+        
+        # Get image from output
+        img = self.output.img
+        
+        # Set text properties
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 1.0
+        thickness = 2
+        
+        # Get text size for background
+        (text_width, text_height), baseline = cv2.getTextSize(text, font, font_scale, thickness)
+        
+        # Draw background rectangle for better visibility
+        bg_x1 = center_x - text_width // 2 - 5
+        bg_y1 = center_y - text_height // 2 - 5
+        bg_x2 = center_x + text_width // 2 + 5
+        bg_y2 = center_y + text_height // 2 + baseline + 5
+        
+        cv2.rectangle(img, (bg_x1, bg_y1), (bg_x2, bg_y2), (0, 0, 0), -1)
+        
+        # Draw text
+        text_x = center_x - text_width // 2
+        text_y = center_y + text_height // 2
+        cv2.putText(img, text, (text_x, text_y), font, font_scale, bgr_color, thickness, cv2.LINE_AA)
+        
+        self.output.img = img
 
     def draw_instance_predictions(self, predictions):
         """
@@ -82,5 +152,10 @@ class TrackVisualizer(Visualizer):
             assigned_colors=colors,
             alpha=alpha,
         )
+
+        # Draw instance IDs at mask centers
+        # if masks is not None:
+        #     for idx, (mask, color) in enumerate(zip(masks, colors)):
+        #         self._draw_text_at_center(mask, str(idx), color)
 
         return self.output

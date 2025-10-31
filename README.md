@@ -76,3 +76,12 @@ If you find the code useful, please also consider the following BibTeX entry.
 ## Acknowledgement
 
 Code is largely based on MaskFormer (https://github.com/facebookresearch/MaskFormer).
+
+
+
+demo
+
+python demo/demo.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --input input.jpg   --output output.jpg   
+
+coco_instance_new_baseline_dataset_mapper,mask_former_instance_dataset_mapperでオーギュメンテーション設定してる
+ここで色変更！
