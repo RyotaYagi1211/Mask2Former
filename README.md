@@ -62,7 +62,7 @@ If you use Mask2Former in your research or wish to refer to the baseline results
 }
 ```
 
-If you find the code useful, please also consider the following BibTeX entry.
+If you find the code useful, please also consider the following BibTeX entry.　
 
 ```BibTeX
 @inproceedings{cheng2021maskformer,
@@ -81,7 +81,9 @@ Code is largely based on MaskFormer (https://github.com/facebookresearch/MaskFor
 
 demo
 
-python demo/demo.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --input input.jpg   --output output.jpg   
+python demo/demo.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --input input.png   --output output.png   
 
-coco_instance_new_baseline_dataset_mapper,mask_former_instance_dataset_mapperでオーギュメンテーション設定してる
-ここで色変更！
+coco_instance_new_baseline_dataset_mapperの中ででオーギュメンテーション設定してる
+ここで色変更！、detectronのutilを用いている
+
+ python train_net.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --num-gpus 1   SOLVER.IMS_PER_BATCH 2 SOLVER.BASE_LR 0.0001   OUTPUT_DIR ./output/coco_instance

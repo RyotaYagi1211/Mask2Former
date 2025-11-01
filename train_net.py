@@ -161,7 +161,7 @@ class Trainer(DefaultTrainer):
             mapper = MaskFormerInstanceDatasetMapper(cfg, True)
             return build_detection_train_loader(cfg, mapper=mapper)
         # coco instance segmentation lsj new baseline
-        elif cfg.INPUT.DATASET_MAPPER_NAME == "coco_instance_lsj":
+        elif cfg.INPUT.DATASET_MAPPER_NAME == "coco_instance_lsj":##ここでオーギュメンテーションの設定
             mapper = COCOInstanceNewBaselineDatasetMapper(cfg, True)
             return build_detection_train_loader(cfg, mapper=mapper)
         # coco panoptic segmentation lsj new baseline

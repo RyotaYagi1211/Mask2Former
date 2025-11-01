@@ -46,7 +46,20 @@ def build_transform_gen(cfg, is_train):
     min_scale = cfg.INPUT.MIN_SCALE
     max_scale = cfg.INPUT.MAX_SCALE
 
-    augmentation = []##augmentation
+    augmentation = []##augmentation、ここでやってる,detectron2の中にあるやつを使ってる、コレでいろいろ変更してみよう
+    augmentation.append(T.RandomBrightness(0.5, 1.8))  
+    augmentation.append(T.RandomContrast(0.5, 1.8))    
+    augmentation.append(T.RandomSaturation(0.5, 1.8))  
+    augmentation.append(T.RandomLighting(0.2))         
+   
+    # 位置、スケール変換
+    if cfg.INPUT.RANDOM_FLIP != "none":
+        augmentation.append(
+            T.RandomFlip(
+                horizontal=cfg.INPUT.RANDOM_FLIP == "horizontal",
+                vertical=cfg.INPUT.RANDOM_FLIP == "vertical",
+            )
+        )
 
     if cfg.INPUT.RANDOM_FLIP != "none":
         augmentation.append(
