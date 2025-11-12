@@ -86,4 +86,4 @@ python demo/demo.py   --config-file configs/coco/instance-segmentation/maskforme
 coco_instance_new_baseline_dataset_mapperの中ででオーギュメンテーション設定してる
 ここで色変更！、detectronのutilを用いている
 
- python train_net.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --num-gpus 1   SOLVER.IMS_PER_BATCH 2 SOLVER.BASE_LR 0.0001   OUTPUT_DIR ./output/coco_instance
+ python train_net.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --num-gpus 1   SOLVER.IMS_PER_BATCH 2 SOLVER.BASE_LR 0.0001   OUTPUT_DIR ./output/coco_instance_train
