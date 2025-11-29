@@ -56,7 +56,7 @@ def get_parser():
     parser.add_argument("--video-input", help="Path to video file.")
     parser.add_argument(
         "--input",
-        nargs="+",
+        nargs="+",default=["/home/ryotayagi/catkin_ws/yagidata/tracking_testdata/night_test5_data20251101"],####################
         help="Path to image or directory (supports folder input).",
     )
     parser.add_argument(#今コレは意味をなしてない、光の条件を変えたデータセット必要だな
@@ -117,7 +117,8 @@ if __name__ == "__main__":
         assert args.input, f"No images found at: {input_path}"
 
         # 出力ディレクトリ準備
-        os.makedirs("outputdata", exist_ok=True)
+        output_dir = ("/home/ryotayagi/catkin_ws/yagidata/tracking_testdata/mask2former/night_test5_data20251101")####################
+        os.makedirs(output_dir, exist_ok=True)
 
         for i, path in enumerate(tqdm.tqdm(args.input)):
             img = read_image(path, format="BGR")
@@ -156,7 +157,7 @@ if __name__ == "__main__":
 
                 # --- 保存 ---
                 vis_img_bgr = vis_img[:, :, ::-1]
-                out_name = f"outputdata/frame_{i:04d}.png"
+                out_name = f"{output_dir}/frame_{i:04d}.png"
                 cv2.imwrite(out_name, vis_img_bgr)
                 print(f"Saved: {out_name}")
 
@@ -199,4 +200,4 @@ if __name__ == "__main__":
             writer.write(vis_frame)
         video.release()
         writer.release()
-        print(f"🎥 Saved video: {output_path}")
+        print(f" Saved video: {output_path}")

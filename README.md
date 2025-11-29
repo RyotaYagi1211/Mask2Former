@@ -82,8 +82,16 @@ Code is largely based on MaskFormer (https://github.com/facebookresearch/MaskFor
 demo
 
 python demo/demo.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --input input.png   --output output.png   
+連続セグメント
+python continuous_segment.py \
+  --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml \
+  --input /home/ryotayagi/catkin_ws/yagidata/tracking_testdata/night_test5_data20251101 \
+  --output /home/ryotayagi/catkin_ws/yagidata/tracking_testdata/mask2former/night_test5_data20251101 \
+  --opts MODEL.WEIGHTS weights/model_final.pth
+
+
 
 coco_instance_new_baseline_dataset_mapperの中ででオーギュメンテーション設定してる
 ここで色変更！、detectronのutilを用いている
 
- python train_net.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --num-gpus 1   SOLVER.IMS_PER_BATCH 2 SOLVER.BASE_LR 0.0001   OUTPUT_DIR ./output/coco_instance_train
+ python train_net.py   --config-file configs/coco/instance-segmentation/maskformer2_R50_bs16_50ep.yaml   --num-gpus 1   SOLVER.IMS_PER_BATCH 2 SOLVER.BASE_LR 0.0001   OUTPUT_DIR ./output/coco_instance_train_1128
