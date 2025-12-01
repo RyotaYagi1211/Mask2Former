@@ -3,7 +3,8 @@ MODEL:
     FREEZE_AT: 0
     NAME: "build_resnet_backbone"
   # WEIGHTS: "detectron2://ImageNetPretrained/torchvision/R-50.pkl"
-  WEIGHTS: "output/coco_train/model_0269999.pth"
+  # WEIGHTS: "output/coco_train/model_0269999.pth"
+  WEIGHTS: "weights/model_final1201.pth"
 
   PIXEL_MEAN: [123.675, 116.280, 103.530]
   PIXEL_STD: [58.395, 57.120, 57.375]
